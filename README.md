@@ -30,13 +30,13 @@ O sistema permite o controle de cadastro, alocação e registro de eventos relac
 
 ## 🎯 Funcionalidades
 
-- [x]Cadastro de viaturas, bases móveis e carros à paisana  
+- [x] Cadastro de viaturas, bases móveis e carros à paisana  
 
-- [x]Registro de status e manutenção de veículos  
+- [x] Registro de status e manutenção de veículos  
 
-- [x]Alocação de policiais por turno  
+- [x] Alocação de policiais por turno  
 
-- [x]Segurança de acesso com perfis distintos  
+- [x] Segurança de acesso com perfis distintos  
 
 ## 🛠️ Tecnologias Utilizadas
 
