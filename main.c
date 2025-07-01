@@ -1,14 +1,13 @@
 /*        -=-=-=-=- POLIFLEET - Gerenciamento de Viaturas -=-=-=-=-
-    Código Inicial Básico: Como ainda não utilizaremos ponteiros ou coisas mais 
-    avançadas, então, o código se baseia em funções e structs, que foram os assuntos 
-    abordados inicialmente em LP2. Por esse motivo, os vetores terão tamanhos fixos. 
+    Código modificado para trabalhar com ponteiros e alocação dinâmica de memória. 
+    Próximos passos: adicionar outras funconalidades descritas no pdf e modificar o código para utilizar lista para mostrar as viaturas na tela.
+    Adicionar também um (Excluir/Apagar Viatura) no menu principal, pois esqueci de adicionar no pdf.
 
 */
 #include <stdio.h>
 #include<stdlib.h>
 #include <string.h>
 
-#define MAX_VIATURAS 10
 #define TAM 50
 
 typedef struct {
@@ -27,18 +26,18 @@ typedef struct {
 // Protótipos
 void menu();
 void submenuBusca();
-int cadastrarViatura(Viatura[], int);
-void listarViaturas(Viatura[], int);
+Viatura* cadastrarViatura(Viatura*, int*);
+void listarViaturas(Viatura*, int);
 void limparBuffer();
-void buscarPorPlaca(Viatura[], int);
-void buscarPorTurno(Viatura[], int);
-void buscarPorPolicial(Viatura[], int);
+void buscarPorPlaca(Viatura*, int);
+void buscarPorTurno(Viatura*, int);
+void buscarPorPolicial(Viatura*, int);
 void limparTela();
 
 // INICIO MAIN
 int main(void) 
 {
-    Viatura viaturas[MAX_VIATURAS];
+    Viatura* viaturas = NULL;
     int totalViaturas = 0;
     int opcao;
 
@@ -50,10 +49,7 @@ int main(void)
         switch (opcao) 
         {
             case 1:
-                if (totalViaturas < MAX_VIATURAS) 
-                    totalViaturas = cadastrarViatura(viaturas, totalViaturas);
-                else 
-                    printf("Limite máximo de viaturas atingido!\n");
+                viaturas = cadastrarViatura(viaturas, &totalViaturas);
                 break;
 
             case 2:
@@ -95,6 +91,8 @@ int main(void)
 
     } while (opcao != 0);
 
+    free(viaturas);
+
     return 0;
 }
 
@@ -121,62 +119,76 @@ void submenuBusca()
 }
 
 // INICIO CADASTRAR VIATURA
-int cadastrarViatura(Viatura v[], int total) 
+Viatura* cadastrarViatura(Viatura* v, int* total) 
 {
     limparTela();
-    printf("\n-=-=-=-=- Cadastro da Viatura %d -=-=-=-=-\n", total + 1);
+
+    Viatura novaViatura;
+    printf("\n-=-=-=-=- Cadastro da Viatura %d -=-=-=-=-\n", *total + 1);
 
     printf("\nCertifique-se de adicionar os dados corretamente.\n");
     printf("Caso haja algum erro, o status ficará como \"desconhecida\".\n\n");
 
     printf("Qual o tipo de veiculo (Ex.: Carro, Moto..): ");
-    scanf("%49[^\n]", v[total].tipoVeiculo);
+    scanf("%49[^\n]", novaViatura.tipoVeiculo);
     limparBuffer();
 
     printf("Placa: ");
-    scanf("%49[^\n]", v[total].placa);
+    scanf("%49[^\n]", novaViatura.placa);
     limparBuffer();
 
     printf("Renavam: "); // Número de Registro do DETRAN
-    scanf("%49[^\n]", v[total].renavam);
+    scanf("%49[^\n]", novaViatura.renavam);
     limparBuffer();
 
     printf("Cor: ");
-    scanf("%49[^\n]", v[total].cor);
+    scanf("%49[^\n]", novaViatura.cor);
     limparBuffer();
 
     printf("Quilometragem: ");
-    scanf("%d", &v[total].quilometragem);
+    scanf("%d", &novaViatura.quilometragem);
     limparBuffer();
 
     printf("Status (Ex.: ativo, manutenção..): ");
-    scanf("%49[^\n]", v[total].status);
+    scanf("%49[^\n]", novaViatura.status);
     limparBuffer();
 
     printf("Categoria (0 = paisana, 1 = oficial, 2 = base móvel): ");
-    scanf("%d", &v[total].categoria);
+    scanf("%d", &novaViatura.categoria);
     limparBuffer();
 
     printf("Turno (0 = manhã, 1 = tarde, 2 = noite): ");
-    scanf("%d", &v[total].turno);
+    scanf("%d", &novaViatura.turno);
     limparBuffer();
 
     printf("Policial responsável: ");
-    scanf("%49[^\n]", v[total].nomePolicial);
+    scanf("%49[^\n]", novaViatura.nomePolicial);
     limparBuffer();
 
     printf("Permissão (0 = comando, 1 = operador, 2 = manutenção, 3 = TI): ");
-    scanf("%d", &v[total].permissao);
+    scanf("%d", &novaViatura.permissao);
     limparBuffer();
+
+    Viatura* temp = realloc(v, (*total + 1) * sizeof(Viatura));
+
+    if ( temp == NULL)
+    {
+        printf("ERRO: memória insuficiente!\n");
+        exit(-1);
+    }
+
+    v = temp;
+    v[*total] = novaViatura;
+    (*total)++;
 
     limparTela();
     printf("\nViatura cadastrada com sucesso!\n\n");
 
-    return total + 1;
+    return v;
 }
 
 // INICIO LISTAR VIATURA
-void listarViaturas(Viatura v[], int total) 
+void listarViaturas(Viatura* v, int total) 
 {
     limparTela();
     printf("\n-=-=-=-=- Lista de Viaturas -=-=-=-=-\n");
@@ -224,7 +236,7 @@ void listarViaturas(Viatura v[], int total)
 }
 
 // INICIO BUSCAR POR PLACA
-void buscarPorPlaca(Viatura v[], int total) 
+void buscarPorPlaca(Viatura* v, int total) 
 {
     char placaBusca[TAM];
     int encontrado = 0;
@@ -248,7 +260,7 @@ void buscarPorPlaca(Viatura v[], int total)
 }
 
 // INICIO BUSCA POR TURNO
-void buscarPorTurno(Viatura v[], int total) 
+void buscarPorTurno(Viatura *v, int total) 
 {
     int turnoBusca;
     int encontrado = 0;
@@ -272,7 +284,7 @@ void buscarPorTurno(Viatura v[], int total)
 }
 
 // INICIO BUSCAR POR POLICIAL
-void buscarPorPolicial(Viatura v[], int total) 
+void buscarPorPolicial(Viatura *v, int total) 
 {
     char policialBusca[TAM];
     int encontrado = 0;
