@@ -1,30 +1,42 @@
 /*        -=-=-=-=- POLIFLEET - Gerenciamento de Viaturas -=-=-=-=-
-    Código modificado: adicionado lista para cadastrar as viaturas e mostrar as viaturas na tela.
-    Adicionado também um Excluir Viatura e Alterar Viatura no menu principal.
+    Código modificado: Adicionado alerta de vencimento de documentos
 
 */
 #include <stdio.h>
 #include<stdlib.h>
 #include <string.h>
+#include <time.h>
 
 #define TAM 50
 
+// INICIO STRUCT DATA
+typedef struct Data{
+    int dia;
+    int mes;
+    int ano;
+} Data;
+
+// INICIO STRUCT VIATURA
 typedef struct Viatura{
     char tipoVeiculo[TAM]; // Carro, moto..
     char placa[TAM];
     char renavam[TAM]; // Número de Registro do DETRAN.
     char cor[TAM];
     int quilometragem;
+    int ultimaRevisaoKM;
     char status[TAM]; // Se está ativo, em manunteção..
     int categoria; // Se o carro é a paisana, oficial ou base móvel.
     int turno;     
     char nomePolicial[TAM];
     int permissao; // comando, manutenção, TI..
+    Data vencimentoIPVA;
+    Data vencimentoLicenciamento;
+    Data vencimentoSeguro;
     struct Viatura* prox;
 } Viatura;
 
 // Protótipos
-void menu();
+void menu(); 
 void submenuBusca();
 Viatura* cadastrarViatura(Viatura*);
 void listarViaturas(Viatura*);
@@ -35,6 +47,10 @@ void buscarPorPolicial(Viatura*);
 void limparTela();
 void alterarViatura(Viatura*);
 Viatura* excluirViatura(Viatura*);
+void lerData(Data*);
+void exibirData(Data);
+void exibirViatura(Viatura*);
+int dataVencida(Data);
 
 // INICIO MAIN
 int main(void) 
@@ -44,7 +60,8 @@ int main(void)
 
     do {
         menu();
-        scanf("%d", &opcao);
+        if(scanf("%d", &opcao) != 1)
+            printf("Entrada inválida. Digite um número!\n");
         limparBuffer();
 
         switch (opcao) 
@@ -60,7 +77,8 @@ int main(void)
             case 3:
                 submenuBusca();
                 int opBusca;
-                scanf("%d", &opBusca);
+                if(scanf("%d", &opBusca) != 1)
+                    printf("Entrada inválida. Digite um número!\n");
                 limparBuffer();
 
                 switch (opBusca) 
@@ -168,8 +186,12 @@ Viatura* cadastrarViatura(Viatura* v)
     scanf("%49[^\n]", novaViatura->cor);
     limparBuffer();
 
-    printf("Quilometragem: ");
+    printf("Quilometragem atual: ");
     scanf("%d", &novaViatura->quilometragem);
+    limparBuffer();
+
+    printf("Quilometragem da última revisão: ");
+    scanf("%d", &novaViatura->ultimaRevisaoKM);
     limparBuffer();
 
     printf("Status (Ex.: ativo, manutenção..): ");
@@ -192,6 +214,15 @@ Viatura* cadastrarViatura(Viatura* v)
     scanf("%d", &novaViatura->permissao);
     limparBuffer();
 
+    printf("Data de vencimento do IPVA:\n");
+    lerData(&novaViatura->vencimentoIPVA);
+
+    printf("\nData de vencimento do Licenciamento:\n");
+    lerData(&novaViatura->vencimentoLicenciamento);
+
+    printf("\nData de vencimento do Seguro:\n");
+    lerData(&novaViatura->vencimentoSeguro);
+
     novaViatura->prox = v;
     v = novaViatura;
 
@@ -209,46 +240,10 @@ void listarViaturas(Viatura* v)
     printf("\n-=-=-=-=- Lista de Viaturas -=-=-=-=-\n");
 
     int i = 1;
-    while (v != NULL)
+    while (v != NULL) 
     {
         printf("\nViatura %d:\n", i++);
-        printf("Tipo: %s\n", v->tipoVeiculo);
-        printf("Placa: %s\n", v->placa);
-        printf("Renavam: %s\n", v->renavam);
-        printf("Cor: %s\n", v->cor);
-        printf("Quilometragem: %d km\n", v->quilometragem);
-        printf("Status: %s\n", v->status);
-
-        printf("Categoria: ");
-        switch (v->categoria) 
-        {
-            case 0: printf("Paisana\n"); break;
-            case 1: printf("Oficial\n"); break;
-            case 2: printf("Base móvel\n"); break;
-            default: printf("Desconhecida\n");
-        }
-
-        printf("Turno: %d\n", v->turno);
-        switch (v->turno) 
-        {
-            case 0: printf("manhã\n"); break;
-            case 1: printf("tarde\n"); break;
-            case 2: printf("noite\n"); break;
-            default: printf("Desconhecido\n");
-        }
-
-        printf("Policial: %s\n", v->nomePolicial);
-        
-        printf("Permissão: ");
-        switch (v->permissao) 
-        {
-            case 0: printf("Comando\n"); break;
-            case 1: printf("Operador\n"); break;
-            case 2: printf("Manutenção\n"); break;
-            case 3: printf("TI\n"); break;
-            default: printf("Desconhecida\n");
-        }
-
+        exibirViatura(v);
         v = v->prox;
     }
 }
@@ -268,7 +263,7 @@ void buscarPorPlaca(Viatura* v)
     {
         if(strcmp(v->placa, placaBusca) == 0)
         {
-            listarViaturas(v);
+            exibirViatura(v);
             encontrado = 1;
         }
         v = v->prox;
@@ -293,7 +288,7 @@ void buscarPorTurno(Viatura *v)
     {
         if(v->turno == turnoBusca)
         {
-            listarViaturas(v);
+            exibirViatura(v);
             encontrado = 1;
         }
         v = v->prox;
@@ -318,7 +313,7 @@ void buscarPorPolicial(Viatura *v)
     {
         if(strstr(v->nomePolicial, policialBusca))
         {
-            listarViaturas(v);
+            exibirViatura(v);
             encontrado = 1;
         }
         v = v->prox;
@@ -349,7 +344,8 @@ void alterarViatura(Viatura *v)
     scanf("%49[^\n]", placa);
     limparBuffer();
 
-    while (v != NULL) {
+    while (v != NULL) 
+    {
         if (strcmp(v->placa, placa) == 0) {
             printf("\n-=-=- Alterando dados da viatura %s -=-=-\n", placa);
 
@@ -366,6 +362,10 @@ void alterarViatura(Viatura *v)
             limparBuffer();
 
             printf("Quilometragem: ");
+            scanf("%d", &v->quilometragem);
+            limparBuffer();
+
+            printf("Quilometragem da última revisão: ");
             scanf("%d", &v->quilometragem);
             limparBuffer();
 
@@ -388,6 +388,15 @@ void alterarViatura(Viatura *v)
             printf("Permissão (0 = comando, 1 = operador, 2 = manutenção, 3 = TI): ");
             scanf("%d", &v->permissao);
             limparBuffer();
+
+            printf("Data de vencimento do IPVA:\n");
+            lerData(&v->vencimentoIPVA);
+
+            printf("Data de vencimento do Licenciamento:\n");
+            lerData(&v->vencimentoLicenciamento);
+
+            printf("Data de vencimento do Seguro:\n");
+            lerData(&v->vencimentoSeguro);
             return;
         }
         v = v->prox;
@@ -428,4 +437,132 @@ Viatura* excluirViatura(Viatura *v)
     printf("Viatura não encontrada.\n");
 
     return v;
+}
+
+// INICIO LER DATA CORRIGIR PARA LIMPAR O BUFFER CORRETAMENTE
+void lerData(Data* d) 
+{
+    int dia = 31;
+
+    printf("Ano (acima de 1900): ");
+    while (scanf("%d", &d->ano) != 1 || d->ano < 1900)
+    {
+        printf("ERRO: Informe um ano válido!\nAno (acima de 1900): ");
+        limparBuffer();
+    }
+    
+    printf("Mês (1-12): ");
+    while (scanf("%d", &d->mes) != 1 || d->mes < 1 || d->mes > 12)
+    {
+        printf("ERRO: Informe um mês válido!\nMês (1-12): ");
+        limparBuffer();
+    }
+
+    if (d->mes == 4 || d->mes == 6 || d->mes == 9 || d->mes == 11)
+    {
+        dia = 30;
+
+    } else if( d->mes == 2)
+    {
+        if(!((d->ano % 4 == 0 && d->ano % 100 != 0) || d->ano % 400 == 0))
+            dia = 28;
+        else 
+            dia = 29;
+    }
+    
+    printf("Dia (1-%d): ", dia);
+    while (scanf("%d", &d->dia) != 1 || d->dia < 1 || d->dia > dia)
+    {
+        printf("ERRO: Informe um dia válido!\nDia (1-%d): ", dia);
+        limparBuffer();
+    }
+
+    limparBuffer();
+}
+
+// INICIO EXIBIR DATA
+void exibirData(Data d) 
+{
+    printf("%02d/%02d/%04d\n", d.dia, d.mes, d.ano);
+}
+
+// INICIO EXIBIR VIATURA
+void exibirViatura(Viatura* v) 
+{
+    printf("Tipo: %s\n", v->tipoVeiculo);
+    printf("Placa: %s\n", v->placa);
+    printf("Renavam: %s\n", v->renavam);
+    printf("Cor: %s\n", v->cor);
+    printf("Quilometragem: %d km\n", v->quilometragem);
+    printf("Status: %s\n", v->status);
+
+    printf("Categoria: ");
+    switch (v->categoria) 
+    {
+        case 0: printf("Paisana\n"); break;
+        case 1: printf("Oficial\n"); break;
+        case 2: printf("Base móvel\n"); break;
+        default: printf("Desconhecida\n");
+    }
+
+    printf("Turno: %d\n", v->turno);
+    switch (v->turno) 
+    {
+        case 0: printf("manhã\n"); break;
+        case 1: printf("tarde\n"); break;
+        case 2: printf("noite\n"); break;
+        default: printf("Desconhecido\n");
+    }
+
+    printf("Policial: %s\n", v->nomePolicial);
+    
+    printf("Permissão: ");
+    switch (v->permissao) 
+    {
+        case 0: printf("Comando\n"); break;
+        case 1: printf("Operador\n"); break;
+        case 2: printf("Manutenção\n"); break;
+        case 3: printf("TI\n"); break;
+        default: printf("Desconhecida\n");
+    }
+
+    printf("Vencimento IPVA: "); exibirData(v->vencimentoIPVA); 
+    if(dataVencida(v->vencimentoIPVA))
+        printf("ALERTA: IPVA VENCIDO!\n");
+    else
+        printf("\n");
+
+    printf("Vencimento Licenciamento: "); exibirData(v->vencimentoLicenciamento);
+    if(dataVencida(v->vencimentoLicenciamento))
+        printf("ALERTA: LICENCIAMENTO VENCIDO!\n");
+    else
+        printf("\n");
+
+    printf("Vencimento Seguro: "); exibirData(v->vencimentoSeguro); 
+    if(dataVencida(v->vencimentoSeguro))
+        printf("ALERTA: SEGURO VENCIDO!\n");
+    else
+        printf("\n");
+
+    // Aviso de manutenção preventiva básica
+    if ((v->quilometragem - v->ultimaRevisaoKM) >= 10000)
+        printf("ALERTA: Revisão preventiva recomendada.\n");
+}
+
+// INICIO DATA VENCIDA
+int dataVencida(Data d) 
+{
+    time_t t = time(NULL);
+    struct tm* hoje = localtime(&t);
+
+    if (d.ano < hoje->tm_year + 1900) 
+        return 1;
+
+    if (d.ano == hoje->tm_year + 1900 && d.mes < hoje->tm_mon + 1) 
+        return 1;
+
+    if (d.ano == hoje->tm_year + 1900 && d.mes == hoje->tm_mon + 1 && d.dia < hoje->tm_mday)
+        return 1;
+
+    return 0;
 }
