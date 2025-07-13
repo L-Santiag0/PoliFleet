@@ -50,12 +50,13 @@ void submenuAlteracao()
     printf("Escolha: ");
 }
 
-// INICIO CADASTRAR VIATURA
+// INICIO CADASTRAR VIATURA 
+// Cadastra e adiciona a viatura em uma lista.
 Viatura* cadastrarViatura(Viatura* v, Usuario u) 
 {
     limparTela();
 
-    Viatura* novaViatura = (Viatura*) malloc(sizeof(Viatura));
+    Viatura* novaViatura = (Viatura*) malloc(sizeof(Viatura)); 
 
     if(!novaViatura)
     {
@@ -127,7 +128,7 @@ Viatura* cadastrarViatura(Viatura* v, Usuario u)
     novaViatura->prox = v;
     v = novaViatura;
 
-    // Controle de logs, escreve no nosso arquivo
+    // Controle de logs, escreve no nosso arquivo o que foi modificado e por quem foi feito
     char logMsg[100];
     sprintf(logMsg, "Cadastro da viatura placa %s", novaViatura->placa);
     registrarLog(logMsg, u.nome);
@@ -143,9 +144,13 @@ Viatura* cadastrarViatura(Viatura* v, Usuario u)
 void listarViaturas(Viatura* v, Usuario u) 
 {
     limparTela();
-    printf("\n-=-=-=-=- Lista de Viaturas -=-=-=-=-\n");
     if(v == NULL)
+    {
         printf("Nenhuma viatura cadastrada no sistema!\n");
+        return;
+    }
+
+    printf("\n-=-=-=-=- Lista de Viaturas -=-=-=-=-\n");
 
     int i = 1;
     while (v != NULL) 
@@ -196,7 +201,7 @@ void buscarPorTurno(Viatura *v, Usuario u)
 
     while(v != NULL)
     {
-        if(v->turno == turnoBusca) // compara as duas strings
+        if(v->turno == turnoBusca) // compara os dois turnos (0 a 2)
         {
             exibirViatura(v, u);
             encontrado = 1;
@@ -247,7 +252,7 @@ void limparTela()
     system("clear");
 }
 
-// INICIO ALTERAR VIATURA (mudar os dados)
+// INICIO ALTERAR VIATURA (mudar os dados completos)
 void alterarViatura(Viatura *v, Usuario u) 
 {
     char placa[TAM];
@@ -412,7 +417,7 @@ void lerData(Data* d)
     limparBuffer();
 }
 
-// INICIO EXIBIR DATA
+// INICIO EXIBIR DATA (dd/mm/aaaa)
 void exibirData(Data d) 
 {
     printf("%02d/%02d/%04d\n", d.dia, d.mes, d.ano); 
@@ -480,6 +485,7 @@ void exibirViatura(Viatura* v, Usuario u)
         printf("ALERTA: SEGURO VENCIDO!\n");
 
     // Aviso de manutenção preventiva básica
+    // Necessária uma revisão a cada 10_000 km
     int manuntencaoPreventiva = (v->quilometragem - v->ultimaRevisaoKM);
     if (manuntencaoPreventiva >= 10000)
         printf("ALERTA: Revisão preventiva recomendada (%dkm desde a última).\n", manuntencaoPreventiva);
@@ -490,6 +496,7 @@ int dataVencida(Data d)
 {
     time_t t = time(NULL);  // Tempo medido em segundos desde (01/01/1970).
     struct tm* hoje = localtime(&t); // Converte os segundos em dia, mes e ano atuais.
+                                    // estrutura da biblioteca time.h
 
     if (d.ano < hoje->tm_year + 1900) // Só começa a contar os anos a partir de 1900, por isso +1900.
         return 1;
@@ -571,6 +578,7 @@ void criarUsuario(Usuario** usuarios, int* totalUsuarios)
 }
 
 // INICIO LOGIN
+// Atualização: Caso somente o usuário estiver correto, mostra um aviso de senha incorreta
 Usuario login(Usuario** usuarios, int* totalUsuarios) 
 {
     char nome[TAM], senha[TAM];
@@ -589,29 +597,33 @@ Usuario login(Usuario** usuarios, int* totalUsuarios)
 
         for (int i = 0; i < *totalUsuarios; i++) 
         {
-            if (strcmp((*usuarios)[i].nome, nome) == 0 && strcmp((*usuarios)[i].senha, senha) == 0) 
+            limparTela();
+
+            if (strcmp((*usuarios)[i].nome, nome) == 0) 
             {
-                usuarioLogado = (*usuarios)[i];
+                if(strcmp((*usuarios)[i].senha, senha) == 0)
+                {
+                    usuarioLogado = (*usuarios)[i];
 
-                limparTela();
-                printf("Login bem-sucedido como %s\n", usuarioLogado.nome);
-                registrarLog("Login", usuarioLogado.nome);
+                    printf("Login bem-sucedido como %s\n", usuarioLogado.nome);
+                    registrarLog("Login", usuarioLogado.nome);
 
-                return usuarioLogado;
+                    return usuarioLogado;
+                } else {
+                    printf("ACESSO NEGADO! Senha incorreta.\n");
+                }
             } else {
-                limparTela();
                 printf("FALHA NO LOGIN: Usuário não está cadastrado no sistema.\n");
             }
         }
     }
     limparTela();
-    printf("Acesso negado. Tente novamente.\n");
 }
 
 // REGISTRO DE LOGS
 void registrarLog(const char* acao, const char* usuario) 
 {
-    FILE* arq = fopen("log_acessos.txt", "a");
+    FILE* arq = fopen("log_acessos.txt", "a"); // "a" serve para acrescentar
     
     if (!arq) 
     {
@@ -619,8 +631,9 @@ void registrarLog(const char* acao, const char* usuario)
         return;
     }
 
-    time_t t = time(NULL);
-    struct tm* tempo = localtime(&t);
+    time_t t = time(NULL); // tempo atual em segundos
+    struct tm* tempo = localtime(&t); // pega o dia, mes e ano atual com base nos segundos.
+                                    // estrutura da biblioteca time.h
 
     fprintf(arq, "%02d/%02d/%04d %02d:%02d - %s: %s\n",
         tempo->tm_mday, tempo->tm_mon + 1, tempo->tm_year + 1900,

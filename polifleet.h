@@ -51,25 +51,25 @@ typedef struct Viatura {
 
 //-=-=-=-=-=-=-=- PROTÓTIPOS DAS FUNÇÕES -=-=-=-=-=-=-=-=-
 
-void menu(Usuario user);
-void submenuBusca();
-void submenuAlteracao();
-Viatura* cadastrarViatura(Viatura* v, Usuario u);
-void listarViaturas(Viatura* v, Usuario u);
+void menu(Usuario user); // Menu Principal
+void submenuBusca(); // Menu buscar por: placa, nome, turno
+void submenuAlteracao(); // Alterar: dados completos ou troca de turno
+Viatura* cadastrarViatura(Viatura* v, Usuario u); // Cadastra e adiciona a viatura em uma lista
+void listarViaturas(Viatura* v, Usuario u); // Mostra todas as viaturas
 void limparBuffer();
-void buscarPorPlaca(Viatura* v, Usuario u);
-void buscarPorTurno(Viatura* v, Usuario u);
-void buscarPorPolicial(Viatura* v, Usuario u);
+void buscarPorPlaca(Viatura* v, Usuario u); // Parte do menu BUSCAR
+void buscarPorTurno(Viatura* v, Usuario u); // Parte do menu BUSCAR
+void buscarPorPolicial(Viatura* v, Usuario u); // Parte do menu BUSCAR
 void limparTela();
-void alterarViatura(Viatura* v, Usuario u);
-Viatura* excluirViatura(Viatura* v, Usuario u);
-void lerData(Data* d);
-void exibirData(Data d);
-void exibirViatura(Viatura* v, Usuario u);
-int dataVencida(Data d);
-void alterarViaturaBasica(Viatura* v, Usuario u);
-void registrarLog(const char* acao, const char* usuario);
-void criarUsuario(Usuario** usuarios, int* totalUsuarios);
-Usuario login(Usuario** usuarios, int* totalUsuarios);
+void alterarViatura(Viatura* v, Usuario u); // Altera todos os dados de uma viatura, exceto a placa.
+Viatura* excluirViatura(Viatura* v, Usuario u); // Retira uma viatura da lista e libera o espaço
+void lerData(Data* d); // Lê a data para os vencimentos
+void exibirData(Data d); // Mostra a data no formato dd/mm/aaaa
+void exibirViatura(Viatura* v, Usuario u); // Mostra somente uma viatura específica
+int dataVencida(Data d); // Verificação da data atual com a informada no cadastro da viatura
+void alterarViaturaBasica(Viatura* v, Usuario u); // Troca de efetivo
+void registrarLog(const char* acao, const char* usuario); // Escreve o histórico de tudo em um arquivo
+void criarUsuario(Usuario** usuarios, int* totalUsuarios); // Funçõao exclusiva do comando
+Usuario login(Usuario** usuarios, int* totalUsuarios); // Valida o login
 
 #endif // POLIFLEET_H
