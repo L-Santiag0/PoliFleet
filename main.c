@@ -6,6 +6,8 @@ int main(void)
     int totalUsuarios = 1;
     Viatura* viaturas = NULL;
 
+
+
     // Criação do usuário administrador padrão
     strcpy(usuarios[0].nome, "admin");
     strcpy(usuarios[0].senha, "0000");
