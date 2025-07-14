@@ -108,12 +108,8 @@ int main(void)
 
     // Liberação de memória antes de encerrar
     printf("Encerrando o programa...\n");
-    while (viaturas != NULL) {
-        Viatura* temp = viaturas;
-        viaturas = viaturas->prox;
-        free(temp);
-    }
-
+    
+    liberarViaturas(viaturas);
     free(usuarios);
 
     return 0;

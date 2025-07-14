@@ -71,5 +71,6 @@ void alterarViaturaBasica(Viatura* v, Usuario u); // Troca de efetivo
 void registrarLog(const char* acao, const char* usuario); // Escreve o histórico de tudo em um arquivo
 void criarUsuario(Usuario** usuarios, int* totalUsuarios); // Funçõao exclusiva do comando
 Usuario login(Usuario** usuarios, int* totalUsuarios); // Valida o login
+void liberarViaturas(Viatura* v); // Libera a lista de viaturas utilizando recursividade
 
 #endif // POLIFLEET_H
