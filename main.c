@@ -3,13 +3,14 @@
 int main(void) 
 {
     Usuario* usuarios = malloc(sizeof(Usuario));
-    int opAlterar, opBusca, totalUsuarios = 1;
+    Usuario user;
+    int opAlterar, opBusca, trocarUsuario, totalUsuarios = 1, opcao = 1;
     Viatura* viaturas = NULL;
 
-    //Vetor de ponteiros para as funções de busca
+    //Vetor de ponteiros para as funções de buscar viaturas
     void (*ptr_FuncaoBusca[])(Viatura*, Usuario) = {buscarPorPlaca, buscarPorTurno, buscarPorPolicial};
 
-    //Vetor de ponteiros para as funções de alterar dados
+    //Vetor de ponteiros para as funções de alterar dados das viaturas
     void (*ptr_FuncaoAlterar[])(Viatura*, Usuario) = {alterarViatura, alterarViaturaBasica};
     
     // Criação do usuário administrador padrão
@@ -18,18 +19,18 @@ int main(void)
     usuarios[0].permissao = 0;
 
     // Laço principal do programa (controla trocas de usuarios)
-    while (1) 
+    while (opcao != 0) 
     {
-        Usuario user = login(&usuarios, &totalUsuarios);
-        int opcao = -1;
-        int trocarUsuario = 0;
+        user = login(&usuarios, &totalUsuarios);
+        opcao = -1;
+        trocarUsuario = 0;
 
         // Laço do menu de opções
         do {
             menu(user);
             if (scanf("%d", &opcao) != 1) 
             {
-                printf("Entrada inválida. Digite um número!\n");
+                printf("Entrada invalida. Digite um numero!\n");
                 limparBuffer();
                 opcao = -1; // Reseta a opção
                 continue;
@@ -38,10 +39,8 @@ int main(void)
 
             switch (opcao) {
             case 1:
-                if (user.permissao == 0 || user.permissao == 2)
+                if (user.permissao != 1)
                     viaturas = cadastrarViatura(viaturas, user);
-                else
-                    printf("Sem permissão.\n");
                 break;
             case 2:
                 listarViaturas(viaturas, user);
@@ -53,7 +52,7 @@ int main(void)
                 while (scanf("%d", &opBusca) !=1 || opBusca < 0 || opBusca > 3)
                 {
                     limparTela();
-                    printf("Valor Inválido! Tente novamente:\n");
+                    printf("Valor Invalido! Tente novamente:\n");
                     submenuBusca();
                     limparBuffer();
                 }
@@ -64,14 +63,14 @@ int main(void)
                 
                 break;
             case 4:
-                if (user.permissao == 0 || user.permissao == 2) 
+                if (user.permissao != 1) 
                 {
                     submenuAlteracao();
 
                     while (scanf("%d", &opAlterar) != 1 || opAlterar < 0 || opAlterar > 2)
                     {
                         limparTela();
-                        printf("Valor Inválido! Tente novamente:\n");
+                        printf("Valor Invalido! Tente novamente:\n");
                         submenuAlteracao();
                         limparBuffer(); 
                     }
@@ -82,38 +81,29 @@ int main(void)
                         ptr_FuncaoAlterar[--opAlterar](viaturas, user);   
                     
                 } else {
-                     printf("Sem permissão.\n");
-                }
+                     ptr_FuncaoAlterar[1](viaturas, user); // Operador só tem permissão para 
+                }                                          // alterar dados básicos
                 break;
             case 5:
-                if (user.permissao == 0 || user.permissao == 2)
+                if (user.permissao != 1)
                     viaturas = excluirViatura(viaturas, user);
-                else
-                    printf("Sem permissão.\n");
                 break;
             case 6:
                 if (user.permissao == 0)
                     criarUsuario(&usuarios, &totalUsuarios);
-                else
-                    printf("Somente comando pode criar usuários.\n");
                 break;
             case 7:
                 limparTela();
-                printf("Trocando usuário...\n");
+                printf("Trocando usuario...\n");
                 registrarLog("Logout", user.nome);
                 trocarUsuario = 1;
                 break;
             case 0:
                 break; // Sai do switch
             default:
-                printf("Opção inválida!\n");
+                printf("Opcao invalida!\n");
             }
         } while (opcao != 0 && trocarUsuario == 0);
-
-        // Se a opção foi 0, encerra o programa
-        if (opcao == 0) {
-            break; 
-        }
     }
 
     // Liberação de memória antes de encerrar

@@ -4,27 +4,27 @@
 void menu(Usuario user) 
 {
     printf("\n-=-=-=- MENU POLIFLEET (%s) -=-=-=-\n", user.nome);
-    if (user.permissao == 0) // Comando
+    if (user.permissao == 0 || user.permissao == 3) // Comando e T.I
     {
         printf("[ 1 ] Cadastrar Viatura\n");
         printf("[ 2 ] Listar Viaturas\n");
         printf("[ 3 ] Buscar Viatura\n");
         printf("[ 4 ] Alterar Dados da Viatura\n");
         printf("[ 5 ] Excluir Viatura\n");
-        printf("[ 6 ] Criar Novo Usuário\n");
+        printf("[ 6 ] Criar Novo Usuario\n");
     } else if(user.permissao <= 1) // Operador
     {
         printf("[ 2 ] Listar Viaturas\n");
         printf("[ 3 ] Buscar Viatura\n");
         printf("[ 4 ] Alterar Dados da Viatura\n");
-    } else { // T.I, manutenção
+    } else { // manutenção
         printf("[ 1 ] Cadastrar Viatura\n");
         printf("[ 2 ] Listar Viaturas\n");
         printf("[ 3 ] Buscar Viatura\n");
         printf("[ 4 ] Alterar Dados da Viatura\n");
         printf("[ 5 ] Excluir Viatura\n");
     }
-    printf("[ 7 ] Trocar de Usuário\n");
+    printf("[ 7 ] Trocar de Usuario\n");
     printf("[ 0 ] Sair\n");
     printf("Escolha: ");
 }
@@ -43,9 +43,9 @@ void submenuBusca()
 // SUBMENU ALTERACAO
 void submenuAlteracao() 
 {
-    printf("\n-=-=-=- ALTERAÇÃO DE VIATURA -=-=-=-\n");
+    printf("\n-=-=-=- ALTERACAO DOS DADOS DA VIATURA -=-=-=-\n");
     printf("[ 1 ] Alterar todos os dados\n");
-    printf("[ 2 ] Alterar dados básicos (Turno/Policial)\n");
+    printf("[ 2 ] Alterar dados basicos (Turno/Policial)\n");
     printf("[ 0 ] Voltar\n");
     printf("Escolha: ");
 }
@@ -67,7 +67,7 @@ Viatura* cadastrarViatura(Viatura* v, Usuario u)
     printf("\n-=-=-=-=- Cadastro da Viatura  -=-=-=-=-\n");
 
     printf("\nCertifique-se de adicionar os dados corretamente.\n");
-    printf("Caso haja algum erro, o status ficará como \"desconhecida\".\n\n");
+    printf("Caso haja algum erro, o status ficara como \"desconhecida\".\n\n");
 
     printf("Qual o tipo de veiculo (Ex.: Carro, Moto..): ");
     scanf("%49[^\n]", novaViatura->tipoVeiculo);
@@ -92,27 +92,27 @@ Viatura* cadastrarViatura(Viatura* v, Usuario u)
     scanf("%d", &novaViatura->quilometragem);
     limparBuffer();
 
-    printf("Quilometragem da última revisão: ");
+    printf("Quilometragem da ultima revisao: ");
     scanf("%d", &novaViatura->ultimaRevisaoKM);
     limparBuffer();
 
-    printf("Status (Ex.: ativo, manutenção..): ");
+    printf("Status (Ex.: ativo, manutencao..): ");
     scanf("%49[^\n]", novaViatura->status);
     limparBuffer();
 
-    printf("Categoria (0 = paisana, 1 = oficial, 2 = base móvel): ");
+    printf("Categoria (0 = paisana, 1 = oficial, 2 = base movel): ");
     scanf("%d", &novaViatura->categoria);
     limparBuffer();
 
-    printf("Turno (0 = manhã, 1 = tarde, 2 = noite): ");
+    printf("Turno (0 = manha, 1 = tarde, 2 = noite): ");
     scanf("%d", &novaViatura->turno);
     limparBuffer();
 
-    printf("Policial responsável: ");
+    printf("Policial responsavel: ");
     scanf("%49[^\n]", novaViatura->nomePolicial);
     limparBuffer();
 
-    printf("Permissão (0 = comando, 1 = operador, 2 = manutenção, 3 = TI): ");
+    printf("Permissao (0 = comando, 1 = operador, 2 = manutencao, 3 = TI): ");
     scanf("%d", &novaViatura->permissao);
     limparBuffer();
 
@@ -283,27 +283,27 @@ void alterarViatura(Viatura *v, Usuario u)
             scanf("%d", &temp->quilometragem);
             limparBuffer();
 
-            printf("Quilometragem da última revisão: ");
+            printf("Quilometragem da ultima revisao: ");
             scanf("%d", &temp->ultimaRevisaoKM);
             limparBuffer();
 
-            printf("Status (Ex.: ativo, manutenção..): ");
+            printf("Status (Ex.: ativo, manutencao..): ");
             scanf("%49[^\n]", temp->status);
             limparBuffer();
 
-            printf("Categoria (0 = paisana, 1 = oficial, 2 = base móvel): ");
+            printf("Categoria (0 = paisana, 1 = oficial, 2 = base movel): ");
             scanf("%d", &temp->categoria);
             limparBuffer();
 
-            printf("Turno (0 = manhã, 1 = tarde, 2 = noite): ");
+            printf("Turno (0 = manha, 1 = tarde, 2 = noite): ");
             scanf("%d", &temp->turno);
             limparBuffer();
 
-            printf("Policial responsável: ");
+            printf("Policial responsavel: ");
             scanf("%49[^\n]", temp->nomePolicial);
             limparBuffer();
 
-            printf("Permissão (0 = comando, 1 = operador, 2 = manutenção, 3 = TI): ");
+            printf("Permissao (0 = comando, 1 = operador, 2 = manutencao, 3 = TI): ");
             scanf("%d", &temp->permissao);
             limparBuffer();
 
@@ -318,7 +318,7 @@ void alterarViatura(Viatura *v, Usuario u)
 
             // Registro de logs, escreve no arquivo
             char logMsg[100];
-            sprintf(logMsg, "Alteração completa da viatura placa %s", temp->placa);
+            sprintf(logMsg, "Alteracao completa da viatura placa %s", temp->placa);
             registrarLog(logMsg, u.nome);
 
             limparTela();
@@ -330,14 +330,14 @@ void alterarViatura(Viatura *v, Usuario u)
         temp = temp->prox;
     }
     limparTela();
-    printf("Viatura com placa %s não encontrada.\n", placa);
+    printf("Viatura com placa %s nao encontrada.\n", placa);
 }
 
 // INICIO EXCLUIR VIATURA
 Viatura* excluirViatura(Viatura *v, Usuario u)
 {
     char placa[TAM];
-    printf("Digite a placa da viatura a ser excluída: ");
+    printf("Digite a placa da viatura a ser excluida: ");
     scanf("%49[^\n]", placa);
     limparBuffer();
 
@@ -354,10 +354,10 @@ Viatura* excluirViatura(Viatura *v, Usuario u)
 
             free(atual);
             limparTela();
-            printf("Viatura excluída com sucesso.\n");
+            printf("Viatura excluida com sucesso.\n");
 
             char logMsg[100];
-            sprintf(logMsg, "Exclusão da viatura placa %s", placa);
+            sprintf(logMsg, "Exclusao da viatura placa %s", placa);
             registrarLog(logMsg, u.nome);
 
             return v;
@@ -366,8 +366,8 @@ Viatura* excluirViatura(Viatura *v, Usuario u)
         anterior = atual;
         atual = atual->prox;
     }
-
-    printf("Viatura não encontrada.\n");
+    limparTela();
+    printf("Viatura nao encontrada.\n");
 
     return v;
 }
@@ -380,16 +380,16 @@ void lerData(Data* d)
     printf("Ano (acima de 1900): ");
     while (scanf("%d", &d->ano) != 1 || d->ano < 1900) // Controle de erro para só entrar com inteiros
     {                                                  // acima de 1900.
-        printf("ERRO: Informe um ano válido!\nAno (acima de 1900): ");
+        printf("ERRO: Informe um ano valido!\nAno (acima de 1900): ");
         limparBuffer();
     }
 
     limparBuffer();
     
-    printf("Mês (1-12): ");
+    printf("Mes (1-12): ");
     while (scanf("%d", &d->mes) != 1 || d->mes < 1 || d->mes > 12) // Controle de erro para só entrar
     {                                                              // com inteiros entre 1 e 12.
-        printf("ERRO: Informe um mês válido!\nMês (1-12): ");
+        printf("ERRO: Informe um mes valido!\nMes (1-12): ");
         limparBuffer();
     }
 
@@ -410,7 +410,7 @@ void lerData(Data* d)
     printf("Dia (1-%d): ", dia);
     while (scanf("%d", &d->dia) != 1 || d->dia < 1 || d->dia > dia) // Controle de erro para entrar
     {                                                               // com inteiros de 1 até 
-        printf("ERRO: Informe um dia válido!\nDia (1-%d): ", dia);  // o dia especificado
+        printf("ERRO: Informe um dia valido!\nDia (1-%d): ", dia);  // o dia especificado
         limparBuffer();
     }
 
@@ -428,9 +428,9 @@ void exibirViatura(Viatura* v, Usuario u)
 {
     if (v->categoria == 0 && u.permissao > 1) // Só podem ver as viaturas a paisana 
     {                                          // quem tiver permissão
-        printf("Identificação: [RESTRITO - VIATURA PAISANA]\n");
+        printf("Identificacao: [RESTRITO - VIATURA PAISANA]\n");
         printf("Status: %s\n", v->status);
-        printf("Responsável: %s\n", v->nomePolicial);
+        printf("Responsavel: %s\n", v->nomePolicial);
         return;
     }
 
@@ -447,14 +447,14 @@ void exibirViatura(Viatura* v, Usuario u)
     {
         case 0: printf("Paisana\n"); break;
         case 1: printf("Oficial\n"); break;
-        case 2: printf("Base móvel\n"); break;
+        case 2: printf("Base movel\n"); break;
         default: printf("Desconhecida\n");
     }
 
     printf("Turno: %d\n", v->turno);
     switch (v->turno) 
     {
-        case 0: printf("manhã\n"); break;
+        case 0: printf("manha\n"); break;
         case 1: printf("tarde\n"); break;
         case 2: printf("noite\n"); break;
         default: printf("Desconhecido\n");
@@ -462,12 +462,12 @@ void exibirViatura(Viatura* v, Usuario u)
 
     printf("Policial: %s\n", v->nomePolicial);
     
-    printf("Permissão: ");
+    printf("Permissao: ");
     switch (v->permissao) 
     {
         case 0: printf("Comando\n"); break;
         case 1: printf("Operador\n"); break;
-        case 2: printf("Manutenção\n"); break;
+        case 2: printf("Manutencao\n"); break;
         case 3: printf("TI\n"); break;
         default: printf("Desconhecida\n");
     }
@@ -488,7 +488,7 @@ void exibirViatura(Viatura* v, Usuario u)
     // Necessária uma revisão a cada 10_000 km
     int manuntencaoPreventiva = (v->quilometragem - v->ultimaRevisaoKM);
     if (manuntencaoPreventiva >= 10000)
-        printf("ALERTA: Revisão preventiva recomendada (%dkm desde a última).\n", manuntencaoPreventiva);
+        printf("ALERTA: Revisao preventiva recomendada (%dkm desde a última).\n", manuntencaoPreventiva);
 }
 
 // INICIO DATA VENCIDA
@@ -514,7 +514,7 @@ int dataVencida(Data d)
 void alterarViaturaBasica(Viatura* v, Usuario u) 
 {
     char tempIdentificador[TAM];
-    printf("Digite o código identificador da viatura: ");
+    printf("Digite o codigo identificador da viatura: ");
     scanf("%49s", tempIdentificador);
     limparBuffer();
 
@@ -522,28 +522,29 @@ void alterarViaturaBasica(Viatura* v, Usuario u)
     while (temp != NULL) {
         if (strcmp(temp->identificador, tempIdentificador) == 0) // compara as duas strings
         {
-            printf("Novo nome do policial responsável: ");
+            printf("Novo nome do policial responsavel: ");
             scanf("%49[^\n]", temp->nomePolicial);
             limparBuffer();
 
-            printf("Novo turno (0=manhã, 1=tarde, 2=noite): ");
+            printf("Novo turno (0=manha, 1=tarde, 2=noite): ");
             scanf("%d", &temp->turno);
             limparBuffer();
 
             char logMsg[100];
-            sprintf(logMsg, "Alteração básica da viatura %s", temp->identificador);
+            sprintf(logMsg, "Alteracao basica da viatura %s", temp->identificador);
             registrarLog(logMsg, u.nome);
 
             limparTela();
 
-            printf("Alterações básicas aplicadas com sucesso.\n");
+            printf("Alteracoes basicas aplicadas com sucesso.\n");
 
             return;
         }
 
         temp = temp->prox;
     }
-    printf("Viatura não encontrada.\n");
+    limparTela();
+    printf("Viatura nao encontrada.\n");
 }
 
 // INICIO CRIAR USUÁRIO
@@ -553,14 +554,14 @@ void criarUsuario(Usuario** usuarios, int* totalUsuarios)
 
     if(!*usuarios)
     {
-        printf("Erro ao alocar memória para novo usuário!\n");
+        printf("Erro ao alocar memoria para novo usuario!\n");
         return;
     }
 
 
-    printf("\n-=-=- CADASTRO DE NOVO USUÁRIO -=-=-\n");
+    printf("\n-=-=- CADASTRO DE NOVO USUARIO -=-=-\n");
 
-    printf("Nome de usuário: ");
+    printf("Nome de usuario: ");
     scanf("%49s", (*usuarios)[*totalUsuarios].nome);
     limparBuffer();
 
@@ -568,12 +569,12 @@ void criarUsuario(Usuario** usuarios, int* totalUsuarios)
     scanf("%49s", (*usuarios)[*totalUsuarios].senha);
     limparBuffer();
 
-    printf("Permissão (0=Comando, 1=Operador, 2=Manutenção, 3=TI): ");
+    printf("Permissao (0=Comando, 1=Operador, 2=Manutencao, 3=TI): ");
     scanf("%d", &(*usuarios)[*totalUsuarios].permissao);
     limparBuffer();
 
     limparTela();
-    printf("Usuário cadastrado com sucesso.\n");
+    printf("Usuario cadastrado com sucesso.\n");
     (*totalUsuarios)++;
 }
 
@@ -587,7 +588,7 @@ Usuario login(Usuario** usuarios, int* totalUsuarios)
     while(1)
     {
         printf("\n== LOGIN POLIFLEET ==\n");
-        printf("Usuário: ");
+        printf("Usuario: ");
         scanf("%49s", nome);
         limparBuffer();
 
@@ -613,7 +614,7 @@ Usuario login(Usuario** usuarios, int* totalUsuarios)
                     printf("ACESSO NEGADO! Senha incorreta.\n");
                 }
             } else {
-                printf("FALHA NO LOGIN: Usuário não está cadastrado no sistema.\n");
+                printf("FALHA NO LOGIN: Usuario nao esta cadastrado no sistema.\n");
             }
         }
     }
