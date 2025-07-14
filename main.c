@@ -3,12 +3,15 @@
 int main(void) 
 {
     Usuario* usuarios = malloc(sizeof(Usuario));
-    int opBusca, totalUsuarios = 1;
+    int opAlterar, opBusca, totalUsuarios = 1;
     Viatura* viaturas = NULL;
 
     //Vetor de ponteiros para as funções de busca
     void (*ptr_FuncaoBusca[])(Viatura*, Usuario) = {buscarPorPlaca, buscarPorTurno, buscarPorPolicial};
 
+    //Vetor de ponteiros para as funções de alterar dados
+    void (*ptr_FuncaoAlterar[])(Viatura*, Usuario) = {alterarViatura, alterarViaturaBasica};
+    
     // Criação do usuário administrador padrão
     strcpy(usuarios[0].nome, "admin");
     strcpy(usuarios[0].senha, "0000");
@@ -57,23 +60,27 @@ int main(void)
 
                 limparBuffer();
                 if (opBusca != 0)
-                {
                     ptr_FuncaoBusca[--opBusca](viaturas, user);
-                }
+                
                 break;
             case 4:
                 if (user.permissao == 0 || user.permissao == 2) 
                 {
                     submenuAlteracao();
 
-                    int opAlterar;
-                    scanf("%d", &opAlterar);
-                    limparBuffer();
-                    
-                    switch(opAlterar) {
-                        case 1: alterarViatura(viaturas, user); break;
-                        case 2: alterarViaturaBasica(viaturas, user); break;
+                    while (scanf("%d", &opAlterar) != 1 || opAlterar < 0 || opAlterar > 2)
+                    {
+                        limparTela();
+                        printf("Valor Inválido! Tente novamente:\n");
+                        submenuAlteracao();
+                        limparBuffer(); 
                     }
+               
+                    limparBuffer();
+
+                    if (opAlterar != 0)
+                        ptr_FuncaoAlterar[--opAlterar](viaturas, user);   
+                    
                 } else {
                      printf("Sem permissão.\n");
                 }
