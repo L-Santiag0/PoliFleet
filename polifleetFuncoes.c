@@ -249,7 +249,7 @@ void limparBuffer()
 // INICIO LIMPAR TELA
 void limparTela()
 {
-    system("clear");
+    system("clear || cls");
 }
 
 // INICIO ALTERAR VIATURA (mudar os dados completos)

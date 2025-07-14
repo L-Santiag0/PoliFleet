@@ -3,10 +3,11 @@
 int main(void) 
 {
     Usuario* usuarios = malloc(sizeof(Usuario));
-    int totalUsuarios = 1;
+    int opBusca, totalUsuarios = 1;
     Viatura* viaturas = NULL;
 
-
+    //Vetor de ponteiros para as funções de busca
+    void (*ptr_FuncaoBusca[])(Viatura*, Usuario) = {buscarPorPlaca, buscarPorTurno, buscarPorPolicial};
 
     // Criação do usuário administrador padrão
     strcpy(usuarios[0].nome, "admin");
@@ -43,16 +44,21 @@ int main(void)
                 listarViaturas(viaturas, user);
                 break;
             case 3:
+                limparTela();
                 submenuBusca();
 
-                int opBusca;
-                scanf("%d", &opBusca);
-                limparBuffer();
+                while (scanf("%d", &opBusca) !=1 || opBusca < 0 || opBusca > 3)
+                {
+                    limparTela();
+                    printf("Valor Inválido! Tente novamente:\n");
+                    submenuBusca();
+                    limparBuffer();
+                }
 
-                switch (opBusca) {
-                case 1: buscarPorPlaca(viaturas, user); break;
-                case 2: buscarPorTurno(viaturas, user); break;
-                case 3: buscarPorPolicial(viaturas, user); break;
+                limparBuffer();
+                if (opBusca != 0)
+                {
+                    ptr_FuncaoBusca[--opBusca](viaturas, user);
                 }
                 break;
             case 4:
