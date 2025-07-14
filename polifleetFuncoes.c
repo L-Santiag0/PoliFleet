@@ -621,18 +621,18 @@ Usuario login(Usuario** usuarios, int* totalUsuarios)
     limparTela();
 }
 
-// REGISTRO DE LOGS
+// INICIO REGISTRO DE LOGS
 void registrarLog(const char* acao, const char* usuario) 
 {
-    FILE* arq = fopen("log_acessos.txt", "a"); // "a" serve para acrescentar
-    
+    FILE* arq = fopen("log_acessos.txt", "a"); // "a" serve para acrescentar, caso o arquivo
+                                              // não exista, ele cria um.
     if (!arq) 
     {
         perror("Erro ao abrir arquivo de log");
         return;
     }
 
-    time_t t = time(NULL); // tempo atual em segundos
+    time_t t = time(NULL); // tempo atual em segundos 
     struct tm* tempo = localtime(&t); // pega o dia, mes e ano atual com base nos segundos.
                                     // estrutura da biblioteca time.h
 
@@ -641,4 +641,15 @@ void registrarLog(const char* acao, const char* usuario)
         tempo->tm_hour, tempo->tm_min, usuario, acao);
 
     fclose(arq);
+}
+
+// INICIO LIBERAR VIATURAS
+// Liberando a lista de viaturas com recursividade
+void liberarViaturas(Viatura* v) 
+{
+    if (v == NULL) 
+        return;
+
+    liberarViaturas(v->prox);
+    free(v);
 }
