@@ -455,71 +455,69 @@ void exibirData(Data d)
 // INICIO EXIBIR VIATURA
 void exibirViatura(Viatura* v, Usuario u) 
 {
-    if (v->categoria == 0 && u.permissao > 1) // Só podem ver as viaturas a paisana 
+    if (v->categoria == 0 && u.permissao != 0) // Só podem ver as viaturas a paisana 
     {                                          // quem tiver permissão
         printf("Identificacao: [RESTRITO - VIATURA PAISANA]\n");
-        printf("Status: %s\n", v->status);
-        printf("Responsavel: %s\n", v->nomePolicial);
         return;
     }
 
-    printf("Identificador: %s\n", v->identificador);
-    printf("Tipo: %s\n", v->tipoVeiculo);
-    printf("Placa: %s\n", v->placa);
-    printf("Renavam: %s\n", v->renavam);
-    printf("Cor: %s\n", v->cor);
-    printf("Quilometragem: %d km\n", v->quilometragem);
-    printf("Status: %s\n", v->status);
+        printf("Identificador: %s\n", v->identificador);
+        printf("Tipo: %s\n", v->tipoVeiculo);
+        printf("Placa: %s\n", v->placa);
+        printf("Renavam: %s\n", v->renavam);
+        printf("Cor: %s\n", v->cor);
+        printf("Quilometragem: %d km\n", v->quilometragem);
+        printf("Status: %s\n", v->status);
 
-    printf("Categoria: ");
-    switch (v->categoria) 
-    {
-        case 0: printf("Paisana\n"); break;
-        case 1: printf("Oficial\n"); break;
-        case 2: printf("Base movel\n"); break;
-        default: printf("Desconhecida\n");
-    }
+        printf("Categoria: ");
+        switch (v->categoria) 
+        {
+            case 0: printf("Paisana\n"); break;
+            case 1: printf("Oficial\n"); break;
+            case 2: printf("Base movel\n"); break;
+            default: printf("Desconhecida\n");
+        }
 
-    printf("Turno: %d\n", v->turno);
-    switch (v->turno) 
-    {
-        case 0: printf("manha\n"); break;
-        case 1: printf("tarde\n"); break;
-        case 2: printf("noite\n"); break;
-        default: printf("Desconhecido\n");
-    }
+        printf("Turno: %d\n", v->turno);
+        switch (v->turno) 
+        {
+            case 0: printf("manha\n"); break;
+            case 1: printf("tarde\n"); break;
+            case 2: printf("noite\n"); break;
+            default: printf("Desconhecido\n");
+        }
 
-    printf("Policial: %s\n", v->nomePolicial);
-    
-    printf("Permissao: ");
-    switch (v->permissao) 
-    {
-        case 0: printf("Comando\n"); break;
-        case 1: printf("Operador\n"); break;
-        case 2: printf("Manutencao\n"); break;
-        case 3: printf("TI\n"); break;
-        default: printf("Desconhecida\n");
-    }
+        printf("Policial: %s\n", v->nomePolicial);
+        
+        printf("Permissao: ");
+        switch (v->permissao) 
+        {
+            case 0: printf("Comando\n"); break;
+            case 1: printf("Operador\n"); break;
+            case 2: printf("Manutencao\n"); break;
+            case 3: printf("TI\n"); break;
+            default: printf("Desconhecida\n");
+        }
 
-    printf("Vencimento IPVA: "); exibirData(v->vencimentoIPVA); 
-    if(dataVencida(v->vencimentoIPVA))
-        printf("ALERTA: IPVA VENCIDO!\n");
+        printf("Vencimento IPVA: "); exibirData(v->vencimentoIPVA); 
+        if(dataVencida(v->vencimentoIPVA))
+            printf("ALERTA: IPVA VENCIDO!\n");
 
-    printf("Vencimento Licenciamento: "); exibirData(v->vencimentoLicenciamento);
-    if(dataVencida(v->vencimentoLicenciamento))
-        printf("ALERTA: LICENCIAMENTO VENCIDO!\n");
+        printf("Vencimento Licenciamento: "); exibirData(v->vencimentoLicenciamento);
+        if(dataVencida(v->vencimentoLicenciamento))
+            printf("ALERTA: LICENCIAMENTO VENCIDO!\n");
 
-    printf("Vencimento Seguro: "); exibirData(v->vencimentoSeguro); 
-    if(dataVencida(v->vencimentoSeguro))
-        printf("ALERTA: SEGURO VENCIDO!\n");
+        printf("Vencimento Seguro: "); exibirData(v->vencimentoSeguro); 
+        if(dataVencida(v->vencimentoSeguro))
+            printf("ALERTA: SEGURO VENCIDO!\n");
 
-    // Aviso de manutenção preventiva básica
-    // Necessária uma revisão a cada 10_000 km
-    int manuntencaoPreventiva = (v->quilometragem - v->ultimaRevisaoKM);
-    if (manuntencaoPreventiva >= 10000)
-        printf("ALERTA: Revisao preventiva recomendada (%dkm desde a última).\n", manuntencaoPreventiva);
+        // Aviso de manutenção preventiva básica
+        // Necessária uma revisão a cada 10_000 km
+        int manuntencaoPreventiva = (v->quilometragem - v->ultimaRevisaoKM);
+        if (manuntencaoPreventiva >= 10000)
+            printf("ALERTA: Revisao preventiva recomendada (%dkm desde a última).\n", manuntencaoPreventiva);
 
-    printf("Consumo médio de combustível da viatura: %.2f\n", v->consumoMedio);
+        printf("Consumo médio de combustível da viatura: %.2f\n", v->consumoMedio);
 }
 
 // INICIO DATA VENCIDA
