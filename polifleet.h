@@ -57,7 +57,7 @@ typedef struct Viatura {
 void menu(Usuario user); // Menu Principal
 void submenuBusca(); // Menu buscar por: placa, nome, turno
 void submenuAlteracao(); // Alterar: dados completos ou troca de turno
-void submenuAbastecimento(); // Menu abastecimento
+void submenuUsuarios(); // Menu criar, listar e excluir usuarios
 Viatura* cadastrarViatura(Viatura* v, Usuario u); // Cadastra e adiciona a viatura em uma lista
 void listarViaturas(Viatura* v, Usuario u); // Mostra todas as viaturas
 void limparBuffer();
@@ -77,5 +77,8 @@ void criarUsuario(Usuario** usuarios, int* totalUsuarios); // Funçõao exclusiv
 Usuario login(Usuario** usuarios, int* totalUsuarios); // Valida o login
 void liberarViaturas(Viatura* v); // Libera a lista de viaturas utilizando recursividade
 void registrarAbastecimento(Viatura* v, Usuario u); // Altera somente os dados de abastecimento
+void ordenarUsuariosPorNome(Usuario* usuarios, int totalUsuarios);
+void listarUsuarios(Usuario** usuarios, int* totalUsuarios);
+void excluirUsuario(Usuario** usuarios, int* totalUsuarios);
 
 #endif // POLIFLEET_H
