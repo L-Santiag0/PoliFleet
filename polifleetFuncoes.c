@@ -11,7 +11,7 @@ void menu(Usuario user)
         printf("[ 3 ] Buscar Viatura\n");
         printf("[ 4 ] Alterar Dados da Viatura\n");
         printf("[ 5 ] Excluir Viatura\n");
-        printf("[ 6 ] Criar Novo Usuario\n");
+        printf("[ 6 ] Menu de Usuario\n");
     } else if(user.permissao <= 1) // Operador
     {
         printf("[ 2 ] Listar Viaturas\n");
@@ -24,7 +24,7 @@ void menu(Usuario user)
         printf("[ 4 ] Alterar Dados da Viatura\n");
         printf("[ 5 ] Excluir Viatura\n");
     }
-    printf("[ 7 ] Registrar abastecimento\n");
+    printf("[ 7 ] Registrar Abastecimento\n");
     printf("[ 8 ] Trocar de Usuario\n");
     printf("[ 0 ] Sair\n");
     printf("Escolha: ");
@@ -48,6 +48,17 @@ void submenuAlteracao()
     printf("[ 1 ] Alterar todos os dados\n");
     printf("[ 2 ] Alterar dados basicos (Turno/Policial)\n");
     printf("[ 0 ] Voltar\n");
+    printf("Escolha: ");
+}
+
+// INICIO SUBMENU USUARIO
+void submenuUsuarios() 
+{
+    printf("\n-=-=-=- MENU USUARIOS -=-=-=-\n");
+    printf("[ 1 ] Criar Usuario\n");
+    printf("[ 2 ] Listar Usuarios\n");
+    printf("[ 3 ] Excluir Usuario\n");
+    printf("[ 0 ] Voltar ao menu principal\n");
     printf("Escolha: ");
 }
 
@@ -714,3 +725,105 @@ void registrarAbastecimento(Viatura* v, Usuario u)
     limparTela();
     printf("Viatura não encontrada.\n");
 }
+
+// INICIO ORDENAR USUARIOS
+// Bubble sort
+void ordenarUsuariosPorNome(Usuario* usuarios, int totalUsuarios) 
+{
+    Usuario temp;
+
+    for (int i = 0; i < totalUsuarios - 1; i++) 
+    {
+        for (int j = i + 1; j < totalUsuarios; j++) 
+        {
+            if (strcmp(usuarios[i].nome, usuarios[j].nome) > 0) 
+            {
+                temp = usuarios[i];
+                usuarios[i] = usuarios[j];
+                usuarios[j] = temp;
+            }
+        }
+    }
+}
+
+// INICIO LISTA USUARIOS
+void listarUsuarios(Usuario** usuarios, int* totalUsuarios)
+{
+    if (*totalUsuarios == 0)
+    {
+        printf("Nenhum usuario cadastrado no sistema.\n");
+        return;
+    }
+
+    ordenarUsuariosPorNome(*usuarios, *totalUsuarios);
+
+    printf("\n-=-=-=- Lista de Usuarios (A-Z) -=-=-=-\n");
+    for (int i = 0; i < *totalUsuarios; i++)
+    {
+        printf("\nUsuario %d:\n", i + 1);
+        printf("Nome: %s\n", (*usuarios)[i].nome);
+        
+        printf("Permissao: ");
+        switch ((*usuarios)[i].permissao)
+        {
+            case 0: 
+                printf("Comando\n"); 
+                break;
+            case 1: 
+                printf("Operador\n"); 
+                break;
+            case 2: 
+                printf("Manutencao\n"); 
+                break;
+            case 3: 
+                printf("TI\n"); 
+                break;
+            default: printf("Desconhecida\n");
+        }
+    }
+}
+
+// INICIO EXCLUIR USUARIO
+void excluirUsuario(Usuario** usuarios, int* totalUsuarios)
+{
+    char nomeBusca[TAM];
+    printf("Digite o nome do usuario a ser excluido: ");
+    scanf("%49s", nomeBusca);
+    limparBuffer();
+
+    int encontrado = 0;
+    Usuario* user = *usuarios; // Temporária para não perder os dados se a realocação falhar
+    for (int i = 0; i < *totalUsuarios; i++) 
+    {
+        if (strcmp((user)[i].nome, nomeBusca) == 0) 
+        {
+            encontrado = 1;
+
+            // Traz os usuários seguintes uma posição para trás
+            for (int j = i; j < *totalUsuarios - 1; j++) 
+                (user)[j] = (user)[j + 1];
+
+            (*totalUsuarios)--;
+
+            user = realloc(user, (*totalUsuarios) * sizeof(Usuario));
+
+            // Se der erro não perde os dados
+            if (user == NULL && *totalUsuarios > 0) 
+            {
+                limparTela();
+                printf("Erro ao realocar memoria apos exclusao!\n");
+                return;
+            }
+
+            limparTela();
+            *usuarios = user; 
+            printf("Usuario %s excluido com sucesso.\n", nomeBusca);
+            return;
+        }
+    }
+
+    limparTela();
+    if (!encontrado)
+        printf("Usuario nao encontrado.\n");
+}
+

@@ -12,6 +12,9 @@ int main(void)
 
     //Vetor de ponteiros para as funções de alterar dados das viaturas
     void (*ptr_FuncaoAlterar[])(Viatura*, Usuario) = {alterarViatura, alterarViaturaBasica};
+
+    //Vetor de ponteiros para as funções de usuarios
+    void (*ptr_FuncaoUsuario[])(Usuario**, int*) = {criarUsuario, listarUsuarios, excluirUsuario};
     
     // Criação do usuário administrador padrão
     strcpy(usuarios[0].nome, "admin");
@@ -90,7 +93,24 @@ int main(void)
                 break;
             case 6:
                 if (user.permissao == 0)
-                    criarUsuario(&usuarios, &totalUsuarios);
+                {
+                    limparTela();
+                    submenuUsuarios();
+
+                while (scanf("%d", &opcaoSubMenus) !=1 || opcaoSubMenus < 0 || opcaoSubMenus > 3)
+                {
+                    limparTela();
+                    printf("Valor Invalido! Tente novamente:\n");
+                    submenuUsuarios();
+                    limparBuffer();
+                }
+                limparTela();
+                limparBuffer();
+
+                if (opcaoSubMenus != 0)
+                    ptr_FuncaoUsuario[--opcaoSubMenus](&usuarios, &totalUsuarios);
+                }
+
                 break;
             case 7:
                 registrarAbastecimento(viaturas, user);
