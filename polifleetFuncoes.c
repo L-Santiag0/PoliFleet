@@ -24,7 +24,8 @@ void menu(Usuario user)
         printf("[ 4 ] Alterar Dados da Viatura\n");
         printf("[ 5 ] Excluir Viatura\n");
     }
-    printf("[ 7 ] Trocar de Usuario\n");
+    printf("[ 7 ] Registrar abastecimento\n");
+    printf("[ 8 ] Trocar de Usuario\n");
     printf("[ 0 ] Sair\n");
     printf("Escolha: ");
 }
@@ -40,7 +41,7 @@ void submenuBusca()
     printf("Escolha: ");
 }
 
-// SUBMENU ALTERACAO
+// INICIO SUBMENU ALTERACAO
 void submenuAlteracao() 
 {
     printf("\n-=-=-=- ALTERACAO DOS DADOS DA VIATURA -=-=-=-\n");
@@ -125,6 +126,15 @@ Viatura* cadastrarViatura(Viatura* v, Usuario u)
     printf("\nData de vencimento do Seguro:\n");
     lerData(&novaViatura->vencimentoSeguro);
 
+    printf("-=-=- ABASTECIMENTO -=-=-\n");
+    printf("Litros abastecidos: ");
+    scanf("%f", &novaViatura->litrosAbastecidos);
+    limparBuffer();
+
+    printf("Km rodados desde ultimo abastecimento: ");
+    scanf("%f", &novaViatura->kmUltimoAbastecimento);
+    limparBuffer();
+
     novaViatura->prox = v;
     v = novaViatura;
 
@@ -140,7 +150,7 @@ Viatura* cadastrarViatura(Viatura* v, Usuario u)
     return v;
 }
 
-// INICIO LISTAR VIATURA
+// INICIO LISTAR VIATURA (lista todas as viaturas cadastradas)
 void listarViaturas(Viatura* v, Usuario u) 
 {
     limparTela();
@@ -316,6 +326,14 @@ void alterarViatura(Viatura *v, Usuario u)
             printf("Data de vencimento do Seguro:\n");
             lerData(&temp->vencimentoSeguro);
 
+            printf("Litros abastecidos: ");
+            scanf("%f", &v->litrosAbastecidos);
+            limparBuffer();
+
+            printf("Km rodados desde ultimo abastecimento: ");
+            scanf("%f", &v->kmUltimoAbastecimento);
+            limparBuffer();
+
             // Registro de logs, escreve no arquivo
             char logMsg[100];
             sprintf(logMsg, "Alteracao completa da viatura placa %s", temp->placa);
@@ -489,6 +507,8 @@ void exibirViatura(Viatura* v, Usuario u)
     int manuntencaoPreventiva = (v->quilometragem - v->ultimaRevisaoKM);
     if (manuntencaoPreventiva >= 10000)
         printf("ALERTA: Revisao preventiva recomendada (%dkm desde a última).\n", manuntencaoPreventiva);
+
+    printf("Consumo médio de combustível da viatura: %.2f\n", v->consumoMedio);
 }
 
 // INICIO DATA VENCIDA
@@ -652,4 +672,45 @@ void liberarViaturas(Viatura* v)
 
     liberarViaturas(v->prox);
     free(v);
+}
+
+// INICIO REGISTRAR ABASTECIMENTO
+void registrarAbastecimento(Viatura* v, Usuario u) 
+{
+    limparTela();
+    char placaBusca[TAM];
+    printf("Digite a placa da viatura: ");
+    scanf("%49[^\n]", placaBusca);
+    limparBuffer();
+
+    while (v != NULL) 
+    {
+        if (strcmp(v->placa, placaBusca) == 0) // Verifica se existe aguma viatura com
+        {                                      // a placa digitada
+            printf("Quantidade de litros abastecidos: ");
+            scanf("%f", &v->litrosAbastecidos);
+            limparBuffer();
+
+            printf("Km rodados desde o ultimo abastecimento: ");
+            scanf("%f", &v->kmUltimoAbastecimento);
+            limparBuffer();
+
+            limparTela();
+            printf("Abastecimento registrado com sucesso!\n");
+
+            if (v->litrosAbastecidos > 0) // denominador não pode ser
+                v->consumoMedio = v->kmUltimoAbastecimento / v->litrosAbastecidos;
+            else 
+                v->consumoMedio = 0;
+                
+            printf("Consumo médio: %.2f km/L\n", v->consumoMedio);
+
+            registrarLog("Abastecimento registrado", u.nome);
+            return;
+        }
+        v = v->prox;
+    }
+
+    limparTela();
+    printf("Viatura não encontrada.\n");
 }
