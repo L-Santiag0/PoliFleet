@@ -4,7 +4,7 @@ int main(void)
 {
     Usuario* usuarios = malloc(sizeof(Usuario));
     Usuario user;
-    int opAlterar, opBusca, trocarUsuario, totalUsuarios = 1, opcao = 1;
+    int opcaoSubMenus, trocarUsuario, totalUsuarios = 1, opcao = 1;
     Viatura* viaturas = NULL;
 
     //Vetor de ponteiros para as funções de buscar viaturas
@@ -49,7 +49,7 @@ int main(void)
                 limparTela();
                 submenuBusca();
 
-                while (scanf("%d", &opBusca) !=1 || opBusca < 0 || opBusca > 3)
+                while (scanf("%d", &opcaoSubMenus) !=1 || opcaoSubMenus < 0 || opcaoSubMenus > 3)
                 {
                     limparTela();
                     printf("Valor Invalido! Tente novamente:\n");
@@ -58,8 +58,8 @@ int main(void)
                 }
 
                 limparBuffer();
-                if (opBusca != 0)
-                    ptr_FuncaoBusca[--opBusca](viaturas, user);
+                if (opcaoSubMenus != 0)
+                    ptr_FuncaoBusca[--opcaoSubMenus](viaturas, user);
                 
                 break;
             case 4:
@@ -67,7 +67,7 @@ int main(void)
                 {
                     submenuAlteracao();
 
-                    while (scanf("%d", &opAlterar) != 1 || opAlterar < 0 || opAlterar > 2)
+                    while (scanf("%d", &opcaoSubMenus) != 1 || opcaoSubMenus < 0 || opcaoSubMenus > 2)
                     {
                         limparTela();
                         printf("Valor Invalido! Tente novamente:\n");
@@ -77,8 +77,8 @@ int main(void)
                
                     limparBuffer();
 
-                    if (opAlterar != 0)
-                        ptr_FuncaoAlterar[--opAlterar](viaturas, user);   
+                    if (opcaoSubMenus != 0)
+                        ptr_FuncaoAlterar[--opcaoSubMenus](viaturas, user);   
                     
                 } else {
                      ptr_FuncaoAlterar[1](viaturas, user); // Operador só tem permissão para 
@@ -93,10 +93,16 @@ int main(void)
                     criarUsuario(&usuarios, &totalUsuarios);
                 break;
             case 7:
+                registrarAbastecimento(viaturas, user);
+                break;
+            case 8:
                 limparTela();
+
                 printf("Trocando usuario...\n");
+
                 registrarLog("Logout", user.nome);
                 trocarUsuario = 1;
+
                 break;
             case 0:
                 break; // Sai do switch

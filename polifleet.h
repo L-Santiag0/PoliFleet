@@ -44,6 +44,9 @@ typedef struct Viatura {
     Data vencimentoLicenciamento;
     Data vencimentoSeguro;
     char identificador[TAM]; // Para as viaturas à paisana
+    float litrosAbastecidos;
+    float kmUltimoAbastecimento;
+    float consumoMedio;
     RegistroTurno* historico;
     struct Viatura* prox;
 } Viatura;
@@ -54,6 +57,7 @@ typedef struct Viatura {
 void menu(Usuario user); // Menu Principal
 void submenuBusca(); // Menu buscar por: placa, nome, turno
 void submenuAlteracao(); // Alterar: dados completos ou troca de turno
+void submenuAbastecimento(); // Menu abastecimento
 Viatura* cadastrarViatura(Viatura* v, Usuario u); // Cadastra e adiciona a viatura em uma lista
 void listarViaturas(Viatura* v, Usuario u); // Mostra todas as viaturas
 void limparBuffer();
@@ -72,5 +76,6 @@ void registrarLog(const char* acao, const char* usuario); // Escreve o históric
 void criarUsuario(Usuario** usuarios, int* totalUsuarios); // Funçõao exclusiva do comando
 Usuario login(Usuario** usuarios, int* totalUsuarios); // Valida o login
 void liberarViaturas(Viatura* v); // Libera a lista de viaturas utilizando recursividade
+void registrarAbastecimento(Viatura* v, Usuario u); // Altera somente os dados de abastecimento
 
 #endif // POLIFLEET_H
